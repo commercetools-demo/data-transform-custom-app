@@ -1,21 +1,20 @@
-import React from 'react';
-import { BackIcon, BinLinearIcon } from '@commercetools-uikit/icons';
-import Icon from '@commercetools-uikit/icon-button';
 import FlatButton from '@commercetools-uikit/flat-button';
+import Icon from '@commercetools-uikit/icon-button';
+import { BackIcon, BinLinearIcon } from '@commercetools-uikit/icons';
 import Spacings from '@commercetools-uikit/spacings';
 import Text from '@commercetools-uikit/text';
 import { useRouteMatch } from 'react-router';
+import { Link as RouterLink } from 'react-router-dom';
 import { useProcess } from '../../../hooks/use-process';
 import { useAppStateContext } from '../../../providers/process';
-import { Link as RouterLink } from 'react-router-dom';
+import ProcessWorkspace from '../process-workspace';
 
 type Props = {
   linkToWelcome: string;
 };
 
 const ProcessDetails = (props: Props) => {
-  const match = useRouteMatch();
-  console.log(match);
+  const { params }: { params: { key: string } } = useRouteMatch();
   const { deleteProcess } = useProcess();
   const { refreshData } = useAppStateContext();
   const hanldeDeleteProcess = async () => {
@@ -31,20 +30,19 @@ const ProcessDetails = (props: Props) => {
           label={'Back'}
           icon={<BackIcon />}
         />
-        <Text.Headline as="h2">Back</Text.Headline>
       </Spacings.Stack>
-      <Text.Headline as="h1">Title: </Text.Headline>
+      <Text.Headline as="h1">Process: {params.key} </Text.Headline>
 
       <Spacings.Stack scale="l">
         <Spacings.Inline justifyContent="space-between">
-          <Text.Subheadline as="h4">DE</Text.Subheadline>
+          <div></div>
           <Icon
             icon={<BinLinearIcon />}
             label="Delete"
             onClick={hanldeDeleteProcess}
           />
         </Spacings.Inline>
-        DETAILS
+        <ProcessWorkspace />
       </Spacings.Stack>
     </Spacings.Stack>
   );

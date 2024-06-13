@@ -58,7 +58,7 @@ const ProcessList = (props: Props) => {
               sortedBy={tableSorting.value.key}
               sortDirection={tableSorting.value.order}
               onSortChange={tableSorting.onChange}
-              onRowClick={(row) => push(`${match.url}/${row.key}`)}
+              onRowClick={(row) => push(`${match.url}/process/${row.key}`)}
             />
             <Pagination
               page={page.value}

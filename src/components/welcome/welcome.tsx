@@ -1,11 +1,12 @@
 import Constraints from '@commercetools-uikit/constraints';
 import Processes from '../process';
+import { PageContentFull } from '@commercetools-frontend/application-components';
 
 const Welcome = () => {
   return (
-    <Constraints.Horizontal max="scale">
+    <PageContentFull>
       <Processes />
-    </Constraints.Horizontal>
+    </PageContentFull>
   );
 };
 Welcome.displayName = 'Welcome';
