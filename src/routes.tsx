@@ -3,7 +3,6 @@ import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Spacings from '@commercetools-uikit/spacings';
 import Welcome from './components/welcome';
 import ProcessDetails from './components/process/details';
-import { workspaceTabs } from './components/process/process-workspace';
 
 type ApplicationRoutesProps = {
   children?: ReactNode;

@@ -7,8 +7,9 @@ import {
   TabularMainPage,
   TabHeader,
 } from '@commercetools-frontend/application-components';
-import { Switch, useRouteMatch, Route } from 'react-router-dom';
+import { Switch, useRouteMatch, Route, useHistory } from 'react-router-dom';
 import Constraints from '@commercetools-uikit/constraints';
+import Preview from '../../preview';
 
 type Props = {
   lastProgressedTab?: string;
@@ -21,27 +22,37 @@ interface Tab {
   component?: React.ReactNode;
 }
 
-export const workspaceTabs: Tab[] = [
-  {
-    label: 'Upload',
-    url: 'upload',
-    icon: <ImportIcon />,
-    component: <Upload />,
-  },
-  {
-    label: 'Preview',
-    url: 'preview',
-    icon: <EyeIcon />,
-  },
-  {
-    label: 'Pre Process',
-    url: 'preprocess',
-    icon: <PageGearIcon />,
-  },
-];
-
 const ProcessWorkspace = (props: Props) => {
   const match = useRouteMatch();
+  const { push } = useHistory();
+
+  const [tempFiles, setTempFiles] = useState<File[]>([]);
+
+  const workspaceTabs: Tab[] = [
+    {
+      label: `Upload ${tempFiles.length > 0 ? `(${tempFiles.length})` : ''}`,
+      url: 'upload',
+      icon: <ImportIcon />,
+      component: (
+        <Upload
+          onFilesChange={setTempFiles}
+          onNextStep={() => push(`${match.url}/preview`)}
+          initialFiles={tempFiles}
+        />
+      ),
+    },
+    {
+      label: 'Preview',
+      url: 'preview',
+      icon: <EyeIcon />,
+      component: <Preview files={tempFiles} />,
+    },
+    {
+      label: 'Pre Process',
+      url: 'preprocess',
+      icon: <PageGearIcon />,
+    },
+  ];
 
   return (
     <Constraints.Horizontal max={'scale'}>

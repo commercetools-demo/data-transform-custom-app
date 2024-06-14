@@ -93,6 +93,7 @@
     "react-redux": "7.2.9",
     "react-router-dom": "5.3.4",
     "redux": "4.2.1",
+    "styled-components": "^6.1.11",
     "typescript": "5.0.4"
   },
   "resolutions": {
