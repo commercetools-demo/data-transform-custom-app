@@ -66,6 +66,7 @@ const Upload = ({ initialFiles, onFilesChange, onNextStep }: Props) => {
         <input
           type="file"
           multiple
+          accept=".csv, .json"
           onChange={handleFileChange}
           ref={inputFile}
           style={{ display: 'none' }}
