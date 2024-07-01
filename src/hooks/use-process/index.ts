@@ -36,7 +36,7 @@ export const useProcess = () => {
         uri: buildUrlWithParams(
           `/${context?.project?.key}/custom-objects/${CONTAINER}`,
           {
-            // where: `value(valueType="${VALUE_TYPES.PROCESS}")`,
+            where: `value(valueType="${VALUE_TYPES.PROCESS}")`,
             ...(limit && { limit: limit.toString() }),
             ...(offset && { offset: offset.toString() }),
           }
