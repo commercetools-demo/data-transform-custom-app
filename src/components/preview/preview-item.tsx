@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import CollapsiblePanel from '@commercetools-uikit/collapsible-panel';
 import { useModalState } from '@commercetools-frontend/application-components';
-import { useParseCSV } from './hooks/use-parse-csv';
+import CheckboxInput from '@commercetools-uikit/checkbox-input';
+import CollapsiblePanel from '@commercetools-uikit/collapsible-panel';
+import DataTable from '@commercetools-uikit/data-table';
+import FieldLabel from '@commercetools-uikit/field-label';
 import LoadingSpinner from '@commercetools-uikit/loading-spinner';
 import { Options } from 'csv-parse';
-import CSVParseOptions from './csv-parse-options';
-import DataTable from '@commercetools-uikit/data-table';
-import { getColumnsFromJson } from '../../utils/jsonUtils';
-import { readFileAsString } from '../../utils/readFileAsString';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import CheckboxInput from '@commercetools-uikit/checkbox-input';
-import FieldLabel from '@commercetools-uikit/field-label';
+import { DEFAULT_NUMBER_OF_PREVIEW_LINES } from '../../constants/parser';
+import { getColumnsFromJson } from '../../utils/jsonUtils';
+import ParseOptions from './csv-parse-options';
+import { useParseCSV } from './hooks/use-parse-csv';
+import { useParseJSON } from './hooks/use-parse-json';
 
 type Props = {
   file: File;
@@ -34,21 +35,23 @@ const PreviewItem = ({ file, selected, handleSelect }: Props) => {
   const [columns, setColumns] = useState<{ key: string; label: string }[]>([]);
   const [options, setOptions] = useState<Options>({
     columns: true,
+    from_line: 1,
+    to_line: DEFAULT_NUMBER_OF_PREVIEW_LINES,
   });
   const { parseCSV } = useParseCSV();
+  const { parseJson } = useParseJSON();
 
   const handleParseCSV = async () => {
     setIsLoading(true);
     const result = await parseCSV(file, options);
     setRecords(result?.parseData);
-    setColumns(getColumnsFromJson(result?.parseData));
+    setColumns(getColumnsFromJson(result?.parseData, options));
     setIsLoading(false);
   };
 
   const handleParseJson = async () => {
-    const fileContent = await readFileAsString(file);
-    const json = JSON.parse(fileContent);
-    setColumns(getColumnsFromJson(json));
+    const json = await parseJson(file, options);
+    setColumns(getColumnsFromJson(json, options));
     setRecords(json);
   };
 
@@ -79,9 +82,11 @@ const PreviewItem = ({ file, selected, handleSelect }: Props) => {
         }
       >
         <StyledStack>
-          {file.type === 'text/csv' && (
-            <CSVParseOptions options={options} onOptionsChange={setOptions} />
-          )}
+          <ParseOptions
+            options={options}
+            onOptionsChange={setOptions}
+            type={file.type}
+          />
           {isLoading && <LoadingSpinner>Loading...</LoadingSpinner>}
           {!isLoading && <DataTable columns={columns} rows={records} />}
         </StyledStack>
