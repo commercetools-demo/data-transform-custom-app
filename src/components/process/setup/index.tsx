@@ -7,7 +7,7 @@ import { useHistory, useRouteMatch } from 'react-router';
 import { Link as RouterLink } from 'react-router-dom';
 import { useProcess } from '../../../hooks/use-process';
 import { useAppStateContext } from '../../../providers/process';
-import ProcessWorkspace from '../process-workspace';
+import ProcessSetupTabularView from '../process-setup-tabular-view';
 import { useConfirmationDialog } from '../../../hooks/use-confirmation-dialog';
 import { useState } from 'react';
 import { ProcessRawFile } from '../../../types/process/process-raw-file';
@@ -16,7 +16,7 @@ type Props = {
   linkToWelcome: string;
 };
 
-const ProcessDetails = (props: Props) => {
+const ProcessSetup = (props: Props) => {
   const { params }: { params: { key: string } } = useRouteMatch();
   const { push } = useHistory();
   const { deleteProcess, fetchAllRelatedProcessEntities } = useProcess();
@@ -62,7 +62,7 @@ const ProcessDetails = (props: Props) => {
               onClick={onDeleteClicked}
             />
           </Spacings.Inline>
-          <ProcessWorkspace />
+          <ProcessSetupTabularView />
         </Spacings.Stack>
       </Spacings.Stack>
       <ConfirmationModals
@@ -76,4 +76,4 @@ const ProcessDetails = (props: Props) => {
   );
 };
 
-export default ProcessDetails;
+export default ProcessSetup;

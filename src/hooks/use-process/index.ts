@@ -14,6 +14,7 @@ import {
   ProcessRawFile,
   ProcessRawFileDraft,
 } from '../../types/process/process-raw-file';
+import { PROCESS_STATUSES } from '../../types/process/process';
 
 const CONTAINER = `${APP_NAME}_processes`;
 const PROCESS_KEY_PREFIX = 'process-';
@@ -126,28 +127,75 @@ export const useProcess = () => {
     return result;
   };
 
-  const uploadfileToProcess = async (
-    fileValue?: Omit<ProcessRawFileDraft, 'valueType'>
-  ): Promise<boolean> => {
-    if (!fileValue) {
-      return false;
+  const getProcess = async (processKey: string): Promise<Process> => {
+    if (!processKey) {
+      return {} as Process;
     }
     const result = await dispatchProcessAction(
-      actions.post({
+      actions.get({
         mcApiProxyTarget: MC_API_PROXY_TARGETS.COMMERCETOOLS_PLATFORM,
-        uri: `/${context?.project?.key}/custom-objects`,
-        payload: {
-          container: CONTAINER,
-          key: uniqueId(PROCESS_RAW_FILE_KEY_PREFIX),
-          value: {
-            ...fileValue,
-            valueType: VALUE_TYPES.RAW_JSON,
-          } as ProcessRawFileDraft,
-        },
+        uri: `/${context?.project?.key}/custom-objects/${CONTAINER}/${processKey}`,
       })
     );
+    return result;
+  };
 
-    return !!result;
+  const updateProcessStatus = async (
+    processKey: string,
+    status: PROCESS_STATUSES
+  ): Promise<Process> => {
+    if (!processKey || !status) {
+      return {} as Process;
+    }
+    const result = await getProcess(processKey).then((process) => {
+      return dispatchProcessAction(
+        actions.post({
+          mcApiProxyTarget: MC_API_PROXY_TARGETS.COMMERCETOOLS_PLATFORM,
+          uri: `/${context?.project?.key}/custom-objects`,
+          payload: {
+            container: CONTAINER,
+            key: processKey,
+            value: {
+              ...process.value,
+              processStatus: status,
+            },
+          },
+        })
+      );
+    });
+    return result;
+  };
+
+  const uploadFilesToProcess = async (
+    fileValues?: Omit<ProcessRawFileDraft, 'valueType'>[]
+  ): Promise<boolean> => {
+    if (!fileValues?.length) {
+      return false;
+    }
+    const processKey = fileValues[0].process;
+    for (const fileValue of fileValues) {
+      await dispatchProcessAction(
+        actions.post({
+          mcApiProxyTarget: MC_API_PROXY_TARGETS.COMMERCETOOLS_PLATFORM,
+          uri: `/${context?.project?.key}/custom-objects`,
+          payload: {
+            container: CONTAINER,
+            key: uniqueId(PROCESS_RAW_FILE_KEY_PREFIX),
+            value: {
+              ...fileValue,
+              valueType: VALUE_TYPES.RAW_JSON,
+            } as ProcessRawFileDraft,
+          },
+        })
+      );
+    }
+
+    const process = await updateProcessStatus(
+      processKey,
+      PROCESS_STATUSES.RAW_FILES
+    );
+
+    return !!process;
   };
 
   const fetchAllRelatedProcessEntities = async (
@@ -167,6 +215,6 @@ export const useProcess = () => {
     createProcess,
     deleteProcess,
     fetchAllRelatedProcessEntities,
-    uploadfileToProcess,
+    uploadFilesToProcess,
   };
 };

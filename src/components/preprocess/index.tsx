@@ -6,7 +6,7 @@ import LoadingSpinner from '@commercetools-uikit/loading-spinner';
 import { useProcess } from '../../hooks/use-process';
 type Props = {
   files: { json: any; name: string; index: number }[];
-  workspace: string;
+  processKey: string;
 };
 
 const StyledDiv = styled.div`
@@ -18,20 +18,22 @@ const StyledDiv = styled.div`
   align-items: center;
 `;
 
-const Preprocess = ({ files, workspace }: Props) => {
-  const { uploadfileToProcess } = useProcess();
+const Preprocess = ({ files, processKey }: Props) => {
+  const { uploadFilesToProcess } = useProcess();
   const [loading, setLoading] = useState(false);
 
   const handleStoreFiles = async () => {
     setLoading(true);
-    for (const file of files) {
-      await uploadfileToProcess({
+
+    await uploadFilesToProcess(
+      files.map((file) => ({
         name: file.name,
         json: file.json,
-        process: workspace,
+        process: processKey,
         index: file.index,
-      });
-    }
+      }))
+    );
+
     setLoading(false);
   };
 

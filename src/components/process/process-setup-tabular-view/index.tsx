@@ -23,7 +23,7 @@ interface Tab {
   component?: React.ReactNode;
 }
 
-const ProcessWorkspace = (props: Props) => {
+const ProcessSetup = (props: Props) => {
   const match = useRouteMatch();
   const { push } = useHistory();
 
@@ -34,7 +34,7 @@ const ProcessWorkspace = (props: Props) => {
     { json: any; name: string; index: number }[]
   >([]);
 
-  const workspaceTabs: Tab[] = [
+  const processSetupTabs: Tab[] = [
     {
       label: `Upload ${tempFiles.length > 0 ? `(${tempFiles.length})` : ''}`,
       url: 'upload',
@@ -63,14 +63,14 @@ const ProcessWorkspace = (props: Props) => {
       label: 'Pre Process',
       url: 'preprocess',
       icon: <PageGearIcon />,
-      component: <Preprocess files={selectedJsons} workspace={key} />,
+      component: <Preprocess files={selectedJsons} processKey={key} />,
     },
   ];
 
   return (
     <Constraints.Horizontal max={'scale'}>
       <Spacings.Inline>
-        {workspaceTabs.map((tab) => (
+        {processSetupTabs.map((tab) => (
           <TabHeader
             key={tab.url}
             to={`${match.url}/${tab.url}`}
@@ -78,7 +78,7 @@ const ProcessWorkspace = (props: Props) => {
           />
         ))}
       </Spacings.Inline>
-      {workspaceTabs.map((tab) => (
+      {processSetupTabs.map((tab) => (
         <Switch key={tab.url}>
           <Route path={`${match.url}/${tab.url}`}>{tab.component}</Route>
         </Switch>
@@ -87,4 +87,4 @@ const ProcessWorkspace = (props: Props) => {
   );
 };
 
-export default ProcessWorkspace;
+export default ProcessSetup;

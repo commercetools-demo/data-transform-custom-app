@@ -12,7 +12,8 @@ import Spacings from '@commercetools-uikit/spacings';
 import { Switch, useRouteMatch } from 'react-router';
 import { useAppStateContext } from '../../../providers/process';
 import { Process } from '../../../types/process/types';
-import ProcessDetails from '../details';
+import ProcessSetup from '../setup';
+import { PROCESS_STATUSES } from '../../../types/process/process';
 
 type Props = {};
 
@@ -20,6 +21,7 @@ const columns = [
   { key: 'key', label: 'Key' },
   { key: 'name', label: 'Name' },
   { key: 'description', label: 'Description' },
+  { key: 'status', label: 'Status' },
   { key: 'type', label: 'Type' },
 ];
 
@@ -29,6 +31,14 @@ const ProcessList = (props: Props) => {
   const match = useRouteMatch();
   const { page, perPage } = usePaginationState();
   const tableSorting = useDataTableSortingState({ key: 'key', order: 'asc' });
+
+  const handleRowClick = (row: NonNullable<Process>) => {
+    if (row.value?.processStatus === PROCESS_STATUSES.RAW_FILES) {
+      push(`${match.url}/process/${row.key}/workspace`);
+    } else {
+      push(`${match.url}/process/${row.key}/setup`);
+    }
+  };
 
   return (
     <Constraints.Horizontal max={'scale'}>
@@ -49,6 +59,8 @@ const ProcessList = (props: Props) => {
                     return item.value?.name;
                   case 'description':
                     return item.value?.description;
+                  case 'status':
+                    return item.value?.processStatus;
                   case 'type':
                     return item.value?.processType;
                   default:
@@ -58,7 +70,7 @@ const ProcessList = (props: Props) => {
               sortedBy={tableSorting.value.key}
               sortDirection={tableSorting.value.order}
               onSortChange={tableSorting.onChange}
-              onRowClick={(row) => push(`${match.url}/process/${row.key}`)}
+              onRowClick={handleRowClick}
             />
             <Pagination
               page={page.value}

@@ -1,4 +1,4 @@
-import { PROCESS_TYPES } from './process';
+import { PROCESS_STATUSES, PROCESS_TYPES } from './process';
 
 export enum VALUE_TYPES {
   PROCESS = 'process',
@@ -9,6 +9,7 @@ export interface ProcessDraft {
   name: string;
   description: string;
   processType: PROCESS_TYPES;
+  processStatus?: PROCESS_STATUSES;
   valueType: VALUE_TYPES;
 }
 

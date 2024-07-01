@@ -2,7 +2,8 @@ import type { ReactNode } from 'react';
 import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import Spacings from '@commercetools-uikit/spacings';
 import Welcome from './components/welcome';
-import ProcessDetails from './components/process/details';
+import ProcessSetup from './components/process/setup';
+import ProcessWorkspace from './components/workspace';
 
 type ApplicationRoutesProps = {
   children?: ReactNode;
@@ -24,8 +25,11 @@ const ApplicationRoutes = (_props: ApplicationRoutesProps) => {
   return (
     <Spacings.Inset scale="l">
       <Switch>
-        <Route path={`${match.url}/process/:key`}>
-          <ProcessDetails linkToWelcome={match.url} />
+        <Route path={`${match.url}/process/:key/setup`}>
+          <ProcessSetup linkToWelcome={match.url} />
+        </Route>
+        <Route path={`${match.url}/process/:key/workspace`}>
+          <ProcessWorkspace linkToWelcome={match.url} />
         </Route>
         <Route>
           <Welcome />
