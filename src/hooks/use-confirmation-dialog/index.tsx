@@ -11,6 +11,7 @@ interface Props {
   hideActionDialog?: boolean;
   deleteButtonLabel?: string;
   deleteMessage?: string;
+  deleteDetailsMessage?: string;
   saveButtonLabel?: string;
   saveMessage?: string;
 }
@@ -72,6 +73,7 @@ export const useConfirmationDialog = ({
     saveMessage,
     deleteButtonLabel,
     deleteMessage,
+    deleteDetailsMessage,
     hideActionDialog,
     hideDeleteDialog,
   }: Props) => {
@@ -102,6 +104,7 @@ export const useConfirmationDialog = ({
           >
             <Spacings.Stack scale="m">
               <Text.Body>{deleteMessage}</Text.Body>
+              <Text.Detail>{deleteDetailsMessage}</Text.Detail>
             </Spacings.Stack>
           </ConfirmationDialog>
         )}

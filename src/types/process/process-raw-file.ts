@@ -7,3 +7,10 @@ export interface ProcessRawFileDraft {
   index: number;
   process: string;
 }
+
+export interface ProcessRawFile {
+  id: string;
+  createdAt: string;
+  key: string;
+  value?: ProcessRawFileDraft;
+}

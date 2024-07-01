@@ -42,6 +42,7 @@ const Preprocess = ({ files, workspace }: Props) => {
       </Text.Body>
       <PrimaryButton
         label="Continue?"
+        isDisabled={loading || files.length === 0}
         iconLeft={loading ? <LoadingSpinner /> : <div />}
         onClick={handleStoreFiles}
       />

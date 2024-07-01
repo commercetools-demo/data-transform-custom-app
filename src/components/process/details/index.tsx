@@ -9,6 +9,8 @@ import { useProcess } from '../../../hooks/use-process';
 import { useAppStateContext } from '../../../providers/process';
 import ProcessWorkspace from '../process-workspace';
 import { useConfirmationDialog } from '../../../hooks/use-confirmation-dialog';
+import { useState } from 'react';
+import { ProcessRawFile } from '../../../types/process/process-raw-file';
 
 type Props = {
   linkToWelcome: string;
@@ -17,8 +19,11 @@ type Props = {
 const ProcessDetails = (props: Props) => {
   const { params }: { params: { key: string } } = useRouteMatch();
   const { push } = useHistory();
-  const { deleteProcess } = useProcess();
+  const { deleteProcess, fetchAllRelatedProcessEntities } = useProcess();
   const { refreshData } = useAppStateContext();
+  const [relatedEntities, setRelatedEntities] = useState<{
+    processFiles: ProcessRawFile[];
+  }>();
 
   const hanldeDeleteProcess = async (key: string) => {
     await deleteProcess(key);
@@ -29,6 +34,12 @@ const ProcessDetails = (props: Props) => {
   const { handleDelete, ConfirmationModals } = useConfirmationDialog({
     deleteAction: (key: string) => hanldeDeleteProcess(key),
   });
+  const onDeleteClicked = async () => {
+    await fetchAllRelatedProcessEntities(params.key).then((res) =>
+      setRelatedEntities(res)
+    );
+    handleDelete(params.key);
+  };
   return (
     <>
       <Spacings.Stack scale="xl">
@@ -48,7 +59,7 @@ const ProcessDetails = (props: Props) => {
             <Icon
               icon={<BinLinearIcon />}
               label="Delete"
-              onClick={() => handleDelete(params.key)}
+              onClick={onDeleteClicked}
             />
           </Spacings.Inline>
           <ProcessWorkspace />
@@ -56,7 +67,10 @@ const ProcessDetails = (props: Props) => {
       </Spacings.Stack>
       <ConfirmationModals
         deleteButtonLabel="Delete"
-        deleteMessage="Are you sure you want to delete this process"
+        deleteMessage={`Are you sure you want to delete this process and ${relatedEntities?.processFiles?.length} files?`}
+        deleteDetailsMessage={`Files: ${relatedEntities?.processFiles?.map(
+          (item) => item.value?.name
+        )}`}
       />
     </>
   );
