@@ -10,6 +10,7 @@ import {
 import { Switch, useRouteMatch, Route, useHistory } from 'react-router-dom';
 import Constraints from '@commercetools-uikit/constraints';
 import Preview from '../../preview';
+import Preprocess from '../../preprocess';
 
 type Props = {
   lastProgressedTab?: string;
@@ -26,7 +27,12 @@ const ProcessWorkspace = (props: Props) => {
   const match = useRouteMatch();
   const { push } = useHistory();
 
+  const { key } = match.params as { key: string };
+
   const [tempFiles, setTempFiles] = useState<File[]>([]);
+  const [selectedJsons, setSelectedJsons] = useState<
+    { json: any; name: string; index: number }[]
+  >([]);
 
   const workspaceTabs: Tab[] = [
     {
@@ -45,12 +51,19 @@ const ProcessWorkspace = (props: Props) => {
       label: 'Preview',
       url: 'preview',
       icon: <EyeIcon />,
-      component: <Preview files={tempFiles} />,
+      component: (
+        <Preview
+          files={tempFiles}
+          onNextStep={() => push(`${match.url}/preprocess`)}
+          onSelectFiles={setSelectedJsons}
+        />
+      ),
     },
     {
       label: 'Pre Process',
       url: 'preprocess',
       icon: <PageGearIcon />,
+      component: <Preprocess files={selectedJsons} workspace={key} />,
     },
   ];
 

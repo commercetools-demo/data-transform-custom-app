@@ -9,16 +9,26 @@ import DataTable from '@commercetools-uikit/data-table';
 import { getColumnsFromJson } from '../../utils/jsonUtils';
 import { readFileAsString } from '../../utils/readFileAsString';
 import styled from 'styled-components';
+import CheckboxInput from '@commercetools-uikit/checkbox-input';
+import FieldLabel from '@commercetools-uikit/field-label';
 
 type Props = {
   file: File;
+  selected?: boolean;
+  handleSelect?: (json: any) => void;
 };
 
 const StyledStack = styled.div`
   overflow-x: scroll;
 `;
+const StyledControl = styled.div`
+  display: flex;
+  align-items: center;
+  max-width: 120px;
+  gap-x: 0.5rem;
+`;
 
-const PreviewItem = ({ file }: Props) => {
+const PreviewItem = ({ file, selected, handleSelect }: Props) => {
   const [isLoading, setIsLoading] = useState(false);
   const [records, setRecords] = useState<any>([]);
   const [columns, setColumns] = useState<{ key: string; label: string }[]>([]);
@@ -57,6 +67,16 @@ const PreviewItem = ({ file }: Props) => {
         isClosed={!isModalOpen}
         onToggle={() => (isModalOpen ? closeModal() : openModal())}
         header={file.name}
+        headerControls={
+          <StyledControl>
+            <FieldLabel htmlFor="selected" title="Save?"></FieldLabel>
+            <CheckboxInput
+              name="selected"
+              onChange={() => handleSelect?.(records)}
+              isChecked={selected}
+            />
+          </StyledControl>
+        }
       >
         <StyledStack>
           {file.type === 'text/csv' && (

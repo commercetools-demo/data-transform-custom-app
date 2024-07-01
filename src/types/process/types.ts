@@ -1,9 +1,15 @@
 import { PROCESS_TYPES } from './process';
 
+export enum VALUE_TYPES {
+  PROCESS = 'process',
+  RAW_JSON = 'raw_json',
+}
+
 export interface ProcessDraft {
   name: string;
   description: string;
-  type: PROCESS_TYPES;
+  processType: PROCESS_TYPES;
+  valueType: VALUE_TYPES;
 }
 
 export interface Process {

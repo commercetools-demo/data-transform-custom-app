@@ -26,8 +26,8 @@ const NewProcessForm = ({
     if (!values.name) {
       errors['name'] = 'Required';
     }
-    if (!values.type) {
-      errors['type'] = 'Required';
+    if (!values.processType) {
+      errors['processType'] = 'Required';
     }
 
     return errors;
@@ -91,14 +91,14 @@ const NewProcessForm = ({
               <Spacings.Inline alignItems="center">
                 <FieldLabel title="Type" />
                 <SelectInput
-                  value={values?.type}
-                  name="type"
+                  value={values?.processType}
+                  name="processType"
                   options={PROCESS_TYPES_OPTIONS}
                   onChange={handleChange}
                 />
               </Spacings.Inline>
-              {errors.description && (
-                <Text.Caption tone="warning">{errors.type}</Text.Caption>
+              {errors.processType && (
+                <Text.Caption tone="warning">{errors.processType}</Text.Caption>
               )}
             </Grid.Item>
           </Grid>

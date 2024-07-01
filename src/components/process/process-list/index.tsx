@@ -50,7 +50,7 @@ const ProcessList = (props: Props) => {
                   case 'description':
                     return item.value?.description;
                   case 'type':
-                    return item.value?.type;
+                    return item.value?.processType;
                   default:
                     return null;
                 }
