@@ -16,7 +16,7 @@ import { useParseJSON } from './hooks/use-parse-json';
 type Props = {
   file: File;
   selected?: boolean;
-  handleSelect?: (json: any) => void;
+  handleSelect?: (options: Options) => void;
 };
 
 const StyledStack = styled.div`
@@ -75,7 +75,7 @@ const PreviewItem = ({ file, selected, handleSelect }: Props) => {
             <FieldLabel htmlFor="selected" title="Save?"></FieldLabel>
             <CheckboxInput
               name="selected"
-              onChange={() => handleSelect?.(records)}
+              onChange={() => handleSelect?.(options)}
               isChecked={selected}
             />
           </StyledControl>

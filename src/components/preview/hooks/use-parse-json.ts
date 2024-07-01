@@ -7,6 +7,9 @@ export const useParseJSON = () => {
     const fileContent = await readFileAsString(file);
     const json = JSON.parse(fileContent);
     if (Array.isArray(json)) {
+      if (!options) {
+        return json;
+      }
       return json.slice(0, options?.to_line ?? DEFAULT_NUMBER_OF_PREVIEW_LINES);
     }
     return [];

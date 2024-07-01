@@ -15,6 +15,9 @@ import {
   ProcessRawFileDraft,
 } from '../../types/process/process-raw-file';
 import { PROCESS_STATUSES } from '../../types/process/process';
+import { FileConfig } from '../../types/process/file-config';
+import { useParseCSV } from '../../components/preview/hooks/use-parse-csv';
+import { useParseJSON } from '../../components/preview/hooks/use-parse-json';
 
 const CONTAINER = `${APP_NAME}_processes`;
 const PROCESS_KEY_PREFIX = 'process-';
@@ -31,6 +34,10 @@ export const useProcess = () => {
     TSdkAction,
     PagedQueryResponse<ProcessRawFile>
   >();
+
+  const { parseCSV } = useParseCSV();
+  const { parseJson } = useParseJSON();
+
   const fetchAllProcesses = async (limit: number = 20, page: number = 1) => {
     const offset = (page - 1) * limit;
 
@@ -167,13 +174,31 @@ export const useProcess = () => {
   };
 
   const uploadFilesToProcess = async (
-    fileValues?: Omit<ProcessRawFileDraft, 'valueType'>[]
+    processKey: string,
+    fileConfigs: FileConfig[]
   ): Promise<boolean> => {
-    if (!fileValues?.length) {
+    if (!fileConfigs?.length) {
       return false;
     }
-    const processKey = fileValues[0].process;
-    for (const fileValue of fileValues) {
+    let json: any[] = [];
+    for (const fileConfig of fileConfigs) {
+      if (fileConfig.file.type === 'text/csv') {
+        json = await parseCSV(fileConfig.file, {
+          ...fileConfig.options,
+          to_line: undefined,
+        });
+      } else if (fileConfig.file.type === 'application/json') {
+        json = await parseJson(fileConfig.file);
+      }
+
+      const fileValue: ProcessRawFileDraft = {
+        name: fileConfig.file.name,
+        process: processKey,
+        index: fileConfig.index,
+        valueType: VALUE_TYPES.RAW_JSON,
+        json,
+      };
+
       await dispatchProcessAction(
         actions.post({
           mcApiProxyTarget: MC_API_PROXY_TARGETS.COMMERCETOOLS_PLATFORM,

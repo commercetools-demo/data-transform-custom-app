@@ -3,48 +3,51 @@ import PreviewItem from './preview-item';
 import { ActionWrapper } from '../atoms/styled/action-wrapper';
 import PrimaryButton from '@commercetools-uikit/primary-button';
 import { useEffect, useState } from 'react';
+import { Options } from 'csv-parse/.';
+import { FileConfig } from '../../types/process/file-config';
 
 type Props = {
   files: File[];
+  selectedFilesConfig: FileConfig[];
   onNextStep: () => void;
-  onSelectFiles: (
-    fileJson: { json: any; name: string; index: number }[]
-  ) => void;
+  onSelectFiles: (fileJson: FileConfig[]) => void;
 };
 
-const Preview = ({ files, onNextStep, onSelectFiles }: Props) => {
-  const [selectedFilesJson, setSelectedFilesJson] = useState<
-    { index: number; name: string; json: any }[]
-  >([]);
+const Preview = ({
+  files,
+  selectedFilesConfig,
+  onNextStep,
+  onSelectFiles,
+}: Props) => {
   const [error, setError] = useState('');
 
-  const handleFileSelect = (json: any, name: string, index: number) => {
-    if (selectedFilesJson.some((f) => f.index === index)) {
-      setSelectedFilesJson(selectedFilesJson.filter((f) => f.index !== index));
+  const handleFileSelect = (options: Options, file: File, index: number) => {
+    if (selectedFilesConfig.some((f) => f.index === index)) {
+      onSelectFiles(selectedFilesConfig.filter((f) => f.index !== index));
     } else {
-      setSelectedFilesJson([...selectedFilesJson, { index, name, json }]);
+      onSelectFiles([...selectedFilesConfig, { index, file, options }]);
     }
   };
 
   useEffect(() => {
-    onSelectFiles(selectedFilesJson);
-  }, [selectedFilesJson]);
+    onSelectFiles(selectedFilesConfig);
+  }, [selectedFilesConfig]);
   return (
     <Spacings.Stack>
       {files.map((file, index) => (
         <PreviewItem
           key={file.name}
           file={file}
-          selected={selectedFilesJson.some((f) => f.index === index)}
-          handleSelect={(json) => handleFileSelect(json, file.name, index)}
+          selected={selectedFilesConfig.some((f) => f.index === index)}
+          handleSelect={(options) => handleFileSelect(options, file, index)}
         />
       ))}
       <ActionWrapper>
         <PrimaryButton
           tone="primary"
-          isDisabled={selectedFilesJson.length === 0}
+          isDisabled={selectedFilesConfig.length === 0}
           onClick={() => {
-            if (selectedFilesJson.length === 0) {
+            if (selectedFilesConfig.length === 0) {
               setError('Please select a file');
             } else {
               onNextStep();

@@ -1,19 +1,16 @@
 import React, { useState } from 'react';
 import Spacings from '@commercetools-uikit/spacings';
-import ViewSwitcher from '@commercetools-uikit/view-switcher';
 import { ImportIcon, EyeIcon, PageGearIcon } from '@commercetools-uikit/icons';
 import Upload from '../../upload';
-import {
-  TabularMainPage,
-  TabHeader,
-} from '@commercetools-frontend/application-components';
+import { TabHeader } from '@commercetools-frontend/application-components';
 import { Switch, useRouteMatch, Route, useHistory } from 'react-router-dom';
 import Constraints from '@commercetools-uikit/constraints';
 import Preview from '../../preview';
 import Preprocess from '../../preprocess';
+import { FileConfig } from '../../../types/process/file-config';
 
 type Props = {
-  lastProgressedTab?: string;
+  linkToWelcome?: string;
 };
 
 interface Tab {
@@ -23,16 +20,16 @@ interface Tab {
   component?: React.ReactNode;
 }
 
-const ProcessSetup = (props: Props) => {
+const ProcessSetup = ({ linkToWelcome }: Props) => {
   const match = useRouteMatch();
   const { push } = useHistory();
 
   const { key } = match.params as { key: string };
 
   const [tempFiles, setTempFiles] = useState<File[]>([]);
-  const [selectedJsons, setSelectedJsons] = useState<
-    { json: any; name: string; index: number }[]
-  >([]);
+  const [selectedFilesConfig, setSelectedFilesConfig] = useState<FileConfig[]>(
+    []
+  );
 
   const processSetupTabs: Tab[] = [
     {
@@ -55,7 +52,8 @@ const ProcessSetup = (props: Props) => {
         <Preview
           files={tempFiles}
           onNextStep={() => push(`${match.url}/preprocess`)}
-          onSelectFiles={setSelectedJsons}
+          selectedFilesConfig={selectedFilesConfig}
+          onSelectFiles={setSelectedFilesConfig}
         />
       ),
     },
@@ -63,7 +61,13 @@ const ProcessSetup = (props: Props) => {
       label: 'Pre Process',
       url: 'preprocess',
       icon: <PageGearIcon />,
-      component: <Preprocess files={selectedJsons} processKey={key} />,
+      component: (
+        <Preprocess
+          files={selectedFilesConfig}
+          processKey={key}
+          onNextStep={() => push(`${linkToWelcome}/${key}/wprkspace`)}
+        />
+      ),
     },
   ];
 

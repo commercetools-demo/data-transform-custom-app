@@ -4,9 +4,11 @@ import PrimaryButton from '@commercetools-uikit/primary-button';
 import styled from 'styled-components';
 import LoadingSpinner from '@commercetools-uikit/loading-spinner';
 import { useProcess } from '../../hooks/use-process';
+import { FileConfig } from '../../types/process/file-config';
 type Props = {
-  files: { json: any; name: string; index: number }[];
+  files: FileConfig[];
   processKey: string;
+  onNextStep: () => void;
 };
 
 const StyledDiv = styled.div`
@@ -18,23 +20,17 @@ const StyledDiv = styled.div`
   align-items: center;
 `;
 
-const Preprocess = ({ files, processKey }: Props) => {
+const Preprocess = ({ files, processKey, onNextStep }: Props) => {
   const { uploadFilesToProcess } = useProcess();
   const [loading, setLoading] = useState(false);
 
   const handleStoreFiles = async () => {
     setLoading(true);
 
-    await uploadFilesToProcess(
-      files.map((file) => ({
-        name: file.name,
-        json: file.json,
-        process: processKey,
-        index: file.index,
-      }))
-    );
+    await uploadFilesToProcess(processKey, files);
 
     setLoading(false);
+    onNextStep();
   };
 
   return (
