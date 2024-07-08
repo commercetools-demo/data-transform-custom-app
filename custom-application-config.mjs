@@ -20,6 +20,12 @@ const config = {
     view: [],
     manage: ['manage_products', 'manage_key_value_documents'],
   },
+  headers:{
+    csp:{
+      "script-src": ["'unsafe-eval'"],
+      "connect-src": ["'self'"]
+    }
+  },
   icon: '${path:@commercetools-frontend/assets/application-icons/rocket.svg}',
   mainMenuLink: {
     defaultLabel: 'Data transform',

@@ -65,7 +65,7 @@ const ProcessSetup = ({ linkToWelcome }: Props) => {
         <Preprocess
           files={selectedFilesConfig}
           processKey={key}
-          onNextStep={() => push(`${linkToWelcome}/${key}/wprkspace`)}
+          onNextStep={() => push(`${linkToWelcome}/${key}/workspace`)}
         />
       ),
     },
