@@ -183,10 +183,12 @@ export const useProcess = () => {
     let json: any[] = [];
     for (const fileConfig of fileConfigs) {
       if (fileConfig.file.type === 'text/csv') {
-        json = await parseCSV(fileConfig.file, {
-          ...fileConfig.options,
-          to_line: undefined,
-        });
+        json = (
+          await parseCSV(fileConfig.file, {
+            ...fileConfig.options,
+            to_line: undefined,
+          })
+        ).parseData;
       } else if (fileConfig.file.type === 'application/json') {
         json = await parseJson(fileConfig.file);
       }
